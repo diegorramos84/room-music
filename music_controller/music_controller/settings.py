@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import environ
 
 env = environ.Env()
@@ -18,7 +19,6 @@ SECRET_KEY = 'django-insecure-z()su#guctk6-*8qb7vg)d6cx09(%6ngs3rgf=a0hx*1&+@r0r
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
