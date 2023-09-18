@@ -1,6 +1,7 @@
-from django.db import models
-import string
 import random
+import string
+
+from django.db import models
 
 
 def generate_unique_code():
@@ -19,7 +20,7 @@ def generate_unique_code():
 # Create your models here.
 class Room(models.Model):
     # code to access the Room
-    code = models.CharField(max_length=8, default="", unique=True)
+    code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
 
     # host - room owner
     host = models.CharField(max_length=50, unique=True)
