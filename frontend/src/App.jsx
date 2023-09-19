@@ -3,6 +3,14 @@ import React from 'react'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 import * as Pages from './pages'
 import * as Components from './components'
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,7 +26,10 @@ function App() {
 
   return (
     <>
-      <RouterProvider router={router}/>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <RouterProvider router={router}/>
+      </ThemeProvider>
     </>
   )
 }
