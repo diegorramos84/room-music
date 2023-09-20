@@ -13,8 +13,6 @@ import Box from '@mui/material/Box'
 import { useState } from 'react'
 import axios from 'axios'
 
-// http://127.0.0.1:8000/api/create-room
-
 
 const RoomCreate = () => {
   const [guestCanPause, setGuestCanPause] = useState(true)
@@ -52,13 +50,13 @@ const RoomCreate = () => {
   return (
     <Grid container spacing ={1}>
       <Grid item xs={12} align="center">
-        <Typography component='h4' variant=''h4>
+        <Typography component={'h4'} variant='h4'>
           Create a Room
         </Typography>
       </Grid>
       <Grid item xs={12} align="center">
         <FormControl>
-          <FormHelperText>
+          <FormHelperText component={'span'}>
             <Box textAlign='center'>Guest control of playback:</Box>
           </FormHelperText>
           <RadioGroup row defaultValue="true">
@@ -90,7 +88,7 @@ const RoomCreate = () => {
               style: { textAlign: 'center'}
             }}
           />
-          <FormHelperText>
+          <FormHelperText component={'span'}>
             <Box textAlign='center'>Votes required to skip song</Box>
           </FormHelperText>
         </FormControl>

@@ -4,7 +4,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import * as Pages from './pages'
 import * as Components from './components'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import {CssBaseline} from '@mui/material';
 
 const darkTheme = createTheme({
   palette: {
@@ -16,8 +16,8 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Components.Header />}>
       <Route index element={<Pages.Home />}/>
-      <Route path='/join' element={<Pages.RoomJoin />}/>
       <Route path='/create' element={<Pages.RoomCreate />}/>
+      <Route path='/room/:code' element={<Pages.Room />}/>
     </Route>
   )
 )
