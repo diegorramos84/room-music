@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
@@ -17,6 +17,8 @@ import axios from 'axios'
 const RoomCreate = () => {
   const [guestCanPause, setGuestCanPause] = useState(true)
   const [votesToSkip, setvotesToSkip] = useState(2)
+
+  const navigate = useNavigate()
 
   const handleVotesSkip = (e) => {
     setvotesToSkip(e.target.value)
@@ -38,14 +40,12 @@ const RoomCreate = () => {
 
     try {
       const roomCreated = await axios.post('http://127.0.0.1:8000/api/create-room', options)
-      console.log('Room created', roomCreated)
+      console.log(roomCreated.data.code)
+      navigate(`/room/${roomCreated.data.code}`)
     } catch (error) {
       console.log(error)
     }
   }
-
-  console.log(votesToSkip)
-  console.log(guestCanPause)
 
   return (
     <Grid container spacing ={1}>
