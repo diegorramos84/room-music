@@ -35,22 +35,30 @@ class CreateRoomView(APIView):
 
     # create post method
     def post(self, request, format=None):
+        print(self.request.session.session_key)
         # checks if session exists, if not, creates one
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        if not request.session.exists(request.session.session_key):
+            request.session.create()
+            request.session.modified = True
+            print('NEW')
+            print(request.session.session_key)
 
         serializer = self.serializer_class(data=request.data['body'])
         if serializer.is_valid():
             guest_can_pause = serializer.data.get("guest_can_pause")
             votes_to_skip = serializer.data.get('votes_to_skip')
             host = self.request.session.session_key
+            print(host, 'HOST!')
             queryset = Room.objects.filter(host=host)
+            print(queryset, 'QUERY')
             if queryset.exists():
+                print('im here')
                 room = queryset[0]
                 room.guest_can_pause = guest_can_pause
                 room.votes_to_skip = votes_to_skip
                 room.save(update_fields=['guest_can_pause', 'votes_to_skip'])
             else:
                 room = Room(host=host, guest_can_pause=guest_can_pause, votes_to_skip=votes_to_skip)
+                print(room, 'ROOM!')
                 room.save()
             return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
