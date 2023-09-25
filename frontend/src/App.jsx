@@ -17,6 +17,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<Components.Header />}>
       <Route index element={<Pages.Home />}/>
       <Route path='/create' element={<Pages.RoomCreate />}/>
+      <Route path='/join' element={<Pages.RoomJoin />}/>
       <Route path='/room/:code' element={<Pages.Room />}/>
     </Route>
   )
