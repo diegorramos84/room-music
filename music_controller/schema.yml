@@ -1,0 +1,112 @@
+openapi: 3.0.3
+info:
+  title: Your Project API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /api/create-room:
+    post:
+      operationId: create_room_create
+      tags:
+      - create-room
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoom'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateRoom'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateRoom'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateRoom'
+          description: ''
+  /api/get-room:
+    get:
+      operationId: get_room_retrieve
+      tags:
+      - get-room
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Room'
+          description: ''
+  /api/room:
+    get:
+      operationId: room_list
+      tags:
+      - room
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Room'
+          description: ''
+components:
+  schemas:
+    CreateRoom:
+      type: object
+      properties:
+        guest_can_pause:
+          type: boolean
+        votes_to_skip:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          maxLength: 8
+        host:
+          type: string
+          maxLength: 50
+        guest_can_pause:
+          type: boolean
+        votes_to_skip:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - host
+      - id
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
