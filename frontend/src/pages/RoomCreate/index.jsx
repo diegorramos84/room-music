@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Button, Grid, Typography, TextField, FormHelperText, FormControl, Radio, RadioGroup, FormControlLabel, Box } from '@mui/material'
+import { Button, Grid, Typography, TextField, FormHelperText, FormControl, Radio, RadioGroup, FormControlLabel, Box, Collapse, Alert } from '@mui/material'
 import { useState } from 'react'
 import axios from 'axios'
 
@@ -14,6 +14,8 @@ const RoomCreate = (props) => {
   const [guestCanPause, setGuestCanPause] = useState(props.guestCanPause)
   const [votesToSkip, setvotesToSkip] = useState(props.votesToSkip)
   const [updateMode, setUpdateMode] = useState(props.update)
+  const [errorMsg, setErrorMsg] = useState("")
+  const [successMsg, setSuccessMsg] = useState("")
 
   const navigate = useNavigate()
 
@@ -59,15 +61,28 @@ const RoomCreate = (props) => {
 
     try {
         await axios.patch('http://127.0.0.1:8000/api/update-room', options)
-        window.alert('Room updated')
+        setSuccessMsg('Room settings updated!')
         props.getRoomDetails()
     } catch (error) {
+      setErrorMsg('Error updating Room settings')
       console.log(error)
     }
   }
 
   return (
     <Grid container direction="column" spacing={1} alignItems="center" justifyContent="center" >
+      <Grid item xs={12}>
+        <Collapse in={ errorMsg != "" || successMsg != "" }>
+          {successMsg != ""
+            ? <Alert severity='success' onClose={() => setSuccessMsg("")}>{successMsg}</Alert>
+            : null
+          }
+          {errorMsg != ""
+            ? <Alert severity='error' onClose={() => setErrorMsg("")}>{errorMsg}</Alert>
+            : null
+          }
+        </Collapse>
+      </Grid>
       <Grid item xs={12}>
         <Typography component={'h4'} variant='h4'>
           { updateMode === true ? 'Update Room' : 'Create a Room' }

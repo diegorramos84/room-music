@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import { useState, useEffect } from 'react'
@@ -12,9 +13,12 @@ const Room = () => {
   const [guestCanPause, setGuestCanPause] = useState(false)
   const [isHost, setIsHost] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [spotifyAuth, setSpotifyAuth] = useState(false)
 
   const navigate = useNavigate()
   let roomCode = useParams()
+
+  console.log(typeof(isHost))
 
   const getRoomDetails = async () => {
     try {
@@ -22,6 +26,7 @@ const Room = () => {
       setVotesToSkip(roomData.data.votes_to_skip)
       setIsHost(String(roomData.data.is_host))
       setGuestCanPause(String(roomData.data.guest_can_pause))
+
       } catch (error) {
       navigate('/')
       console.log('You left the room or the room was deleted by the host!')
@@ -42,14 +47,56 @@ const Room = () => {
     }
   }
 
-  useEffect(() => {
+  const checkAuthenticateSpotify = async () => {
+    console.log('Check')
     try {
-      getRoomDetails()
+      const data = await axios.get('http://127.0.0.1:8000/spotify/is-auth')
+
+      setSpotifyAuth(data.status)
+      console.log(spotifyAuth,'AUTH', typeof(spotifyAuth))
+      console.log(spotifyAuth, 'should be false')
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const authenticateSpotify = async () => {
+    console.log('auth')
+    try {
+      console.log('GET URL bitch')
+      const get_url = await axios.get('http://127.0.0.1:8000/spotify/get-url')
+      console.log(get_url, 'URL!!!!!')
+      console.log(get_url.data['url'], 'DATA')
+      window.location.replace(get_url.data['url'])
+      console.log(spotifyAuth, 'should be true')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+
+  // useEffect to get roomDetails when page is created and loaded
+  useEffect(() => {
+    getRoomDetails()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // should fire this after isHost is updated after getRoomDetails()
+  useEffect(() => {
+    if (isHost === 'true') {
+      checkAuthenticateSpotify()
+    }
+  }, [isHost])
+
+  // will be fired after we check if user is authenticated and update the auth state
+  useEffect(() => {
+    if (spotifyAuth === false) {
+      authenticateSpotify()
+    }
+  }, [spotifyAuth])
+
+
 
   const renderSettings = () => {
     return (
