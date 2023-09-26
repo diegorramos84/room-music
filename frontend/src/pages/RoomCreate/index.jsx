@@ -25,7 +25,27 @@ const RoomCreate = (props) => {
     e.target.value === 'true' ? setGuestCanPause(true) : setGuestCanPause(false)
   }
 
-  const handleSubmit = async () => {
+  const handleCreate= async () => {
+
+    const options = {
+      headers: {'Content-Type': 'application/json'},
+      body: {
+        votes_to_skip: votesToSkip,
+        guest_can_pause: guestCanPause,
+      },
+      withCredentials: true
+    }
+
+    try {
+      const roomCreated = await axios.post('http://127.0.0.1:8000/api/create-room', options)
+      navigate(`/room/${roomCreated.data.code}`)
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleUpdate = async () => {
 
     const options = {
       headers: {'Content-Type': 'application/json'},
@@ -38,13 +58,9 @@ const RoomCreate = (props) => {
     }
 
     try {
-      if (updateMode === true) {
         await axios.patch('http://127.0.0.1:8000/api/update-room', options)
         window.alert('Room updated')
         props.getRoomDetails()
-      }
-      const roomCreated = await axios.post('http://127.0.0.1:8000/api/create-room', options)
-      navigate(`/room/${roomCreated.data.code}`)
     } catch (error) {
       console.log(error)
     }
@@ -100,7 +116,7 @@ const RoomCreate = (props) => {
         <Button
           color='primary'
           variant='contained'
-          onClick={handleSubmit}
+          onClick={ updateMode === true ? handleUpdate : handleCreate }
           >{ updateMode === true ? 'Update Room' : 'Create a Room' }
         </Button>
       </Grid>
