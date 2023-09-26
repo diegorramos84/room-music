@@ -65,8 +65,6 @@ const Room = () => {
     try {
       console.log('GET URL bitch')
       const get_url = await axios.get('http://127.0.0.1:8000/spotify/get-url')
-      console.log(get_url, 'URL!!!!!')
-      console.log(get_url.data['url'], 'DATA')
       window.location.replace(get_url.data['url'])
       console.log(spotifyAuth, 'should be true')
     } catch (error) {
