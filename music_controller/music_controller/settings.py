@@ -30,10 +30,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # External apps
-    'api.apps.ApiConfig',
     'rest_framework',
     'corsheaders',
-    'drf_spectacular'
+    'drf_spectacular',
+    'spotify',
+    # Internal apps
+    'api.apps.ApiConfig'
+
 ]
 
 MIDDLEWARE = [

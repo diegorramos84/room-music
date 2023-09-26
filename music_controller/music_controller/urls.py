@@ -8,7 +8,10 @@ from drf_spectacular.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # API
     path('api/', include('api.urls')),
+    # Spotify
+    path('spotify/', include('spotify.urls')),
     # YOUR PATTERNS
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:

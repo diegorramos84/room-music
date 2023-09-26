@@ -40,7 +40,6 @@ class JoinRoom(APIView):
             request.session.modified = True
 
         code = request.data['body']['code']
-        # print(request.data['body']['code'], 'HRE!!!!!')
         if code:
             room_result = Room.objects.filter(code=code)
             if len(room_result) > 0:
