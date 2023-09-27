@@ -13,12 +13,10 @@ const Room = () => {
   const [guestCanPause, setGuestCanPause] = useState(false)
   const [isHost, setIsHost] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
-  const [spotifyAuth, setSpotifyAuth] = useState(false)
+  const [spotifyAuth, setSpotifyAuth] = useState(null)
 
   const navigate = useNavigate()
   let roomCode = useParams()
-
-  console.log(typeof(isHost))
 
   const getRoomDetails = async () => {
     try {
@@ -52,9 +50,16 @@ const Room = () => {
     try {
       const data = await axios.get('http://127.0.0.1:8000/spotify/is-auth')
 
-      setSpotifyAuth(data.status)
-      console.log(spotifyAuth,'AUTH', typeof(spotifyAuth))
-      console.log(spotifyAuth, 'should be false')
+      const status = data.data.status
+
+      // only updates the state if user is NOT auth to avoid infinite loop redirection
+      if(status === false) {
+        setSpotifyAuth(status)
+      }
+      if(status === true){
+        console.log('User is already authenticated')
+      }
+
     } catch (error) {
       console.log(error)
     }
@@ -62,16 +67,19 @@ const Room = () => {
 
   const authenticateSpotify = async () => {
     console.log('auth')
-    try {
-      console.log('GET URL bitch')
-      const get_url = await axios.get('http://127.0.0.1:8000/spotify/get-url')
-      window.location.replace(get_url.data['url'])
-      console.log(spotifyAuth, 'should be true')
-    } catch (error) {
-      console.log(error)
+    if(spotifyAuth === false) {
+      try {
+        const get_url = await axios.get('http://127.0.0.1:8000/spotify/get-url')
+        // console.log(get_url.data.url)
+        const spotifyUrl = get_url.data.url
+        window.location.href = spotifyUrl
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      console.log('user is already auth')
     }
   }
-
 
 
   // useEffect to get roomDetails when page is created and loaded
@@ -89,11 +97,15 @@ const Room = () => {
 
   // will be fired after we check if user is authenticated and update the auth state
   useEffect(() => {
+    console.log(spotifyAuth)
     if (spotifyAuth === false) {
+      console.log('User is not authenticated, redirecting to Spotify...')
       authenticateSpotify()
     }
+    if (spotifyAuth === true) {
+      console.log('User is alread logged in at Spotify')
+    }
   }, [spotifyAuth])
-
 
 
   const renderSettings = () => {
