@@ -7,6 +7,7 @@ import axios from 'axios'
 import { Grid, Typography, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import RoomCreate from '../RoomCreate'
+import { MusicPlayer } from '../../components'
 
 const Room = () => {
   const [votesToSkip, setVotesToSkip] = useState(2)
@@ -14,6 +15,7 @@ const Room = () => {
   const [isHost, setIsHost] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [spotifyAuth, setSpotifyAuth] = useState(null)
+  const [song, setSong] = useState({})
 
   const navigate = useNavigate()
   let roomCode = useParams()
@@ -28,6 +30,19 @@ const Room = () => {
       } catch (error) {
       navigate('/')
       console.log('You left the room or the room was deleted by the host!')
+    }
+  }
+
+  const getCurrentSong = async () => {
+    try {
+      const songData = await axios.get('http://127.0.0.1:8000/spotify/current-song')
+
+      if (songData) {
+        setSong(songData.data)
+      }
+
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -58,6 +73,7 @@ const Room = () => {
       }
       if(status === true){
         console.log('User is already authenticated')
+        getCurrentSong()
       }
 
     } catch (error) {
@@ -70,7 +86,6 @@ const Room = () => {
     if(spotifyAuth === false) {
       try {
         const get_url = await axios.get('http://127.0.0.1:8000/spotify/get-url')
-        // console.log(get_url.data.url)
         const spotifyUrl = get_url.data.url
         window.location.href = spotifyUrl
       } catch (error) {
@@ -85,6 +100,10 @@ const Room = () => {
   // useEffect to get roomDetails when page is created and loaded
   useEffect(() => {
     getRoomDetails()
+
+    const interval = setInterval(getCurrentSong,1000)
+
+    return () => clearInterval(interval)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -107,6 +126,7 @@ const Room = () => {
     }
   }, [spotifyAuth])
 
+  console.log(song.time)
 
   const renderSettings = () => {
     return (
@@ -139,21 +159,7 @@ const Room = () => {
           Code: {roomCode.code}
         </Typography>
       </Grid>
-      <Grid item xs={12}>
-        <Typography variant='h6' component="h4">
-          Votes: {votesToSkip}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant='h6' component="h4">
-          Guest can pause: {guestCanPause}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant='h6' component="h4">
-          Host: {isHost}
-        </Typography>
-      </Grid>
+      <MusicPlayer {...song} />
       { isHost === 'true'
         ? <Grid item xs={12}>
             <Button
