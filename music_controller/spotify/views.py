@@ -1,11 +1,13 @@
 import environ
 import requests
+from api.models import Room
 from django.shortcuts import redirect, render
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .util import (  # generate_random_string,
+    execute_spotify_api_request,
     is_spotify_authenticated,
     update_or_create_user_tokens,
 )
@@ -84,10 +86,58 @@ def spotify_callback(request, format=None):
         return Response({ 'error': 'An error ocurred while requesting tokens'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     # redirect to frontend home (localhost for now)
     return redirect('http://127.0.0.1:5173')
-    # return Response('REDIRECT')
 
 class IsAuthenticated(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(self.request.session.session_key)
         print(is_authenticated)
         return Response({ 'status': is_authenticated}, status=status.HTTP_200_OK)
+
+
+class CurrentSong(APIView):
+    def get(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)
+
+        if room:
+            room = room[0]
+        else:
+            return Response({'Error': 'could not find room'}, status=status.HTTP_404_NOT_FOUND)
+
+        host = room.host
+        endpoint = 'player/currently-playing'
+        response = execute_spotify_api_request(host, endpoint)
+
+        # item is what we are looking in the api response that holds info about the song
+        if 'error' in response or 'item' not in response:
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+
+        item = response.get('item')
+        duration = item.get('duration_ms')
+        progress = response.get('progress_ms')
+        album_cover = item.get('album').get('images')[0].get('url')
+        is_playing = response.get('is_playing')
+        song_id = item.get('id')
+
+        # format song artists
+        artist_string = ""
+
+        for i, artist in enumerate(item.get('artists')):
+            if i > 0:
+                artist_string += ", "
+            name = artist.get('name')
+            artist_string += name
+
+        song = {
+            'title': item.get('name'),
+            'artist': artist_string,
+            'duration': duration,
+            'time': progress,
+            'image_url': album_cover,
+            'is_playing': is_playing,
+            'votes': 0,
+            'id': song_id
+        }
+
+
+        return Response(song, status=status.HTTP_200_OK)

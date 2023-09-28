@@ -23,6 +23,7 @@ environ.Env.read_env(env_file)
 #     return ''.join(random.choice(letters) for i in range(length))
 
 
+BASE_URL = 'https://api.spotify.com/v1/me/'
 
 def get_user_tokens(session_key):
     user_tokens = SpotifyToken.objects.filter(user=session_key)
@@ -90,3 +91,24 @@ def refresh_spotify_token(session_key):
     except requests.exceptions.RequestException as e:
         print("An error occurred:", e)
         return Response({ 'error': 'An error ocurred while requesting tokens'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+def execute_spotify_api_request(session_key, endpoint, post_=False, put_=False):
+    tokens = get_user_tokens(session_key)
+    headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokens.access_token}
+
+    if post_:
+        requests.post(BASE_URL + endpoint, headers=headers)
+
+    if put_:
+        requests.put(BASE_URL + endpoint, headers=headers)
+
+
+    print(headers)
+    print(BASE_URL + endpoint)
+    response = requests.get(BASE_URL + endpoint, {}, headers=headers)
+    print(response)
+
+    try:
+        return response.json()
+    except:
+        return {'Error': 'Issue with request'}
