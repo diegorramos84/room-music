@@ -65,7 +65,7 @@ const RoomJoin = () => {
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Button color='secondary' variant='contained' to="/" component={Link}>Back</Button>
+        <Typography color='secondary' variant='contained' to="/" component={Link}>Back</Typography>
       </Grid>
     </Grid>
   )

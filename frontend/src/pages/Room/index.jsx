@@ -36,7 +36,6 @@ const Room = () => {
   const getCurrentSong = async () => {
     try {
       const songData = await axios.get('http://127.0.0.1:8000/spotify/current-song')
-
       if (songData) {
         setSong(songData.data)
       }
@@ -73,7 +72,6 @@ const Room = () => {
       }
       if(status === true){
         console.log('User is already authenticated')
-        getCurrentSong()
       }
 
     } catch (error) {
@@ -153,7 +151,7 @@ const Room = () => {
     return  renderSettings()
   }
   return (
-    <Grid container align="center" direction="column" alignItems="center" justifyContent="center" spacing={1}>
+    <Grid container align="center" direction="column" alignItems="center" justifyContent="center" spacing={2}>
       <Grid item xs={12}>
         <Typography variant='h4' component="h4">
           Code: {roomCode.code}
@@ -161,21 +159,27 @@ const Room = () => {
       </Grid>
       <MusicPlayer {...song} />
       { isHost === 'true'
-        ? <Grid item xs={12}>
-            <Button
+        ? <Grid item xs={6}>
+            <Typography
               color= 'primary'
               variant='contained'
               onClick={() => handleShowSettings(true)}
-            >Settings</Button>
+              sx={{
+                cursor: 'pointer'
+              }}
+            >[Settings]</Typography>
           </Grid>
         : null
       }
-      <Grid item xs={12}>
-        <Button
+      <Grid item xs={6}>
+        <Typography
           color='secondary'
           variant='contained'
           onClick={leaveRoom}
-        >Leave Room</Button>
+          sx={{
+            cursor: 'pointer'
+          }}
+        >[Leave Room]</Typography>
       </Grid>
     </Grid>
   )
