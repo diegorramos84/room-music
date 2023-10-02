@@ -42,7 +42,6 @@ def update_or_create_user_tokens(session_key, access_token, token_type,expires_i
         tokens.refresh_token = refresh_token
         tokens.expires_in = expires_in
         tokens.token_type = token_type
-        print('updating tokens', tokens)
         tokens.save(update_fields=['access_token', 'refresh_token', 'expires_in', 'token_type'])
 
     # otherwise create new token using the model
@@ -54,7 +53,6 @@ def update_or_create_user_tokens(session_key, access_token, token_type,expires_i
             expires_in=expires_in,
             token_type=token_type
         )
-        print('trying to save', tokens)
         tokens.save()
 
 def is_spotify_authenticated(session_key):
@@ -63,6 +61,7 @@ def is_spotify_authenticated(session_key):
         expiry = tokens.expires_in
         if expiry <= timezone.now():
             refresh_spotify_token(session_key)
+            print('TRYING TO REFRESH TOKENS')
         print('Auth is True')
         return True
     print('Auth is false')
@@ -73,7 +72,7 @@ def refresh_spotify_token(session_key):
 
     try:
         response = requests.post('https://accounts.spotify.com/api/token', data={
-            'grant_type': 'refresh_token',
+            'grant_type': 'refresh_code',
             'refresh_token': refresh_token,
             'client_id': env('CLIENT_ID'),
             'client_secret': env('CLIENT_SECRET')
@@ -83,7 +82,6 @@ def refresh_spotify_token(session_key):
 
         access_token = data.get('access_token')
         token_type = data.get('token_type')
-        refresh_token = data.get('refresh_token')
         expires_in = data.get('expires_in')
 
         update_or_create_user_tokens(session_key, access_token, token_type, expires_in, refresh_token)
@@ -102,13 +100,19 @@ def execute_spotify_api_request(session_key, endpoint, post_=False, put_=False):
     if put_:
         requests.put(BASE_URL + endpoint, headers=headers)
 
-
-    print(headers)
-    print(BASE_URL + endpoint)
     response = requests.get(BASE_URL + endpoint, {}, headers=headers)
-    print(response)
 
     try:
         return response.json()
     except:
         return {'Error': 'Issue with request'}
+
+
+def play_song(session_key):
+    return execute_spotify_api_request(session_key, "player/play", put_=True)
+
+def pause_song(session_key):
+    return execute_spotify_api_request(session_key, "player/pause", put_=True)
+
+def skip_song(session_key):
+    return execute_spotify_api_request(session_key, "player/next", post_=True)
