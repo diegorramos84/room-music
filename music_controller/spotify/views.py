@@ -68,6 +68,9 @@ def spotify_callback(request, format=None):
             request.session.modified = True
 
         data = response.json()
+        print(response, 'RESPONSE')
+        print(data, "DATA")
+        print(data.get('refresh_token'), "REFRESH")
 
         access_token = data.get('access_token')
         token_type = data.get('token_type')
@@ -76,7 +79,7 @@ def spotify_callback(request, format=None):
         error = data.get('error')
         session_key = request.session.session_key
 
-        update_or_create_user_tokens(session_key, access_token, refresh_token, expires_in, token_type )
+        update_or_create_user_tokens(session_key, access_token, refresh_token, expires_in, token_type)
 
 
     except requests.exceptions.RequestException as e:
@@ -89,7 +92,6 @@ class IsAuthenticated(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(self.request.session.session_key)
         print(is_authenticated)
-        print('AUUUUTHHHHH!!!!')
         return Response({ 'status': is_authenticated}, status=status.HTTP_200_OK)
 
 

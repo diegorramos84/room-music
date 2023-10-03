@@ -32,17 +32,17 @@ def get_user_tokens(session_key):
     else:
         return None
 
-def update_or_create_user_tokens(session_key, access_token, token_type,expires_in, refresh_token):
+def update_or_create_user_tokens(session_key, access_token, refresh_token, expires_in, token_type):
     tokens = get_user_tokens(session_key)
     # converts the expires in (3600 secs) to a delta and a timestamp to be saved in the db
     expires_in = timezone.now() + timedelta(seconds=expires_in)
     # if user already exists, update its tokens
     if tokens:
         tokens.access_token = access_token
-        tokens.refresh_token = refresh_token
+        # tokens.refresh_token = refresh_token
         tokens.expires_in = expires_in
         tokens.token_type = token_type
-        tokens.save(update_fields=['access_token', 'refresh_token', 'expires_in', 'token_type'])
+        tokens.save(update_fields=['access_token', 'expires_in', 'token_type'])
 
     # otherwise create new token using the model
     else:
@@ -69,21 +69,23 @@ def is_spotify_authenticated(session_key):
 
 def refresh_spotify_token(session_key):
     refresh_token = get_user_tokens(session_key).refresh_token
+    print(refresh_token, 'REFRESH TOKEN')
 
     try:
         response = requests.post('https://accounts.spotify.com/api/token', data={
-            'grant_type': 'refresh_code',
+            'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
             'client_id': env('CLIENT_ID'),
             'client_secret': env('CLIENT_SECRET')
         })
 
         data = response.json()
+        print(data, 'DATA')
 
         access_token = data.get('access_token')
         token_type = data.get('token_type')
         expires_in = data.get('expires_in')
-
+    # removed refresh_token to be update as it stays the same
         update_or_create_user_tokens(session_key, access_token, token_type, expires_in, refresh_token)
 
     except requests.exceptions.RequestException as e:
