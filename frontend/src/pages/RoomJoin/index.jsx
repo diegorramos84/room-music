@@ -41,8 +41,8 @@ const RoomJoin = () => {
   return (
     <Grid container align="center" direction="column" alignItems="center" justifyContent="center" spacing={1}>
       <Grid item xs={12}>
-        <Typography variant='h4' component='h4'>
-          Join a Room:
+        <Typography padding={2} color='#1AC183' variant='h4' component="h4">
+          join a room:
         </Typography>
       </Grid>
       <Grid item xs={12}>
@@ -54,18 +54,60 @@ const RoomJoin = () => {
           helperText={!roomCode ? "" : errorMessage}
           variant='outlined'
           onChange={handleTextChange}
+          sx = {{
+            '& label.Mui-focused': {
+              color: '#1AC183',
+            },
+            '& .MuiInput-underline:after': {
+              borderBottomColor: '#18b6ff', // Change underline color when focused
+            },
+            '& input': {
+              color: '#18b6ff'
+            }
+          }}
         />
       </Grid>
       <Grid item xs={12}>
         <Button
-          color='primary'
-          variant='contained'
+          size='small'
+          variant='text'
           onClick={handleSubmit}
-          >Join Room
+          sx={{
+            cursor: 'pointer',
+            color: '#18b6ff',
+            fontSize:'1.8vh',
+            textTransform: 'none',
+            padding:0,
+            ":hover": {
+              color: 'black',
+              backgroundColor: '#18b6ff',
+              boxShadow: '0.4ch 0 0 0 #18b6ff, -0.3ch 0 0 0 #18b6ff, 0.4ch 0.2ch 0 0 #18b6ff, -0.3ch 0.2ch 0 0 #18b6ff',
+              opacity: 0.8,
+            }
+          }}
+          >[join Room]
         </Button>
       </Grid>
       <Grid item xs={12}>
-        <Typography color='secondary' variant='contained' to="/" component={Link}>Back</Typography>
+        <Button
+          to="/"
+          component={Link}
+          size='small'
+          variant='text'
+          sx={{
+            cursor: 'pointer',
+            color: '#ff45b4',
+            fontSize:'1.8vh',
+            textTransform: 'none',
+            padding:0,
+            ":hover": {
+              color: 'black',
+              backgroundColor: '#ff45b4',
+              boxShadow: '0.4ch 0 0 0 #ff45b4, -0.3ch 0 0 0 #ff45b4, 0.4ch 0.2ch 0 0 #ff45b4, -0.3ch 0.2ch 0 0 #ff45b4',
+              opacity: 0.8,
+            }
+          }}
+        >[back]</Button>
       </Grid>
     </Grid>
   )

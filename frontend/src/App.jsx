@@ -10,6 +10,9 @@ const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
+  typography: {
+    fontFamily: ['IBM Plex Mono', 'monospace']
+  }
 });
 
 const router = createBrowserRouter(

@@ -84,33 +84,43 @@ const RoomCreate = (props) => {
         </Collapse>
       </Grid>
       <Grid item xs={12}>
-        <Typography component={'h4'} variant='h4'>
-          { updateMode === true ? 'Update Room' : 'Create a Room' }
+        <Typography component={'h4'} variant='h4' padding={2} color='#1AC183'>
+          { updateMode === true ? 'update room' : 'create a room' }
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <FormControl>
+        <FormControl sx={{ marginBottom: '10px'}}>
           <FormHelperText component={'span'}>
             <Box textAlign='center'>Guest control of playback:</Box>
           </FormHelperText>
           <RadioGroup row defaultValue="true">
             <FormControlLabel
-              label='Play/Pause'
+              label='[play/pause]'
               value='true'
               labelPlacement='bottom'
               onChange={handleGuestCanPauseChange}
-              control={<Radio />}/>
+              sx={{
+                '& .MuiFormControlLabel-label': {
+                  color: '#18b6ff'
+                }
+              }}
+              control={<Radio sx={{color:'#18b6ff'}} />}/>
             <FormControlLabel
-              label='No Control'
+              label='[no control]'
               value='false'
               onChange={handleGuestCanPauseChange}
               labelPlacement='bottom'
-              control={<Radio color='error' />}/>
+              sx={{
+                '& .MuiFormControlLabel-label': {
+                  color: '#ff45b4'
+                }
+              }}
+              control={<Radio sx={{color: '#ff45b4'}} />}/>
           </RadioGroup>
         </FormControl>
       </Grid>
       <Grid item xs={12}>
-        <FormControl>
+        <FormControl sx={{ marginBottom: '10px'}}>
           <TextField
             required={true}
             type='number'
@@ -121,24 +131,62 @@ const RoomCreate = (props) => {
               min: 1,
               style: { textAlign: 'center'}
             }}
+            sx = {{
+              '& .MuiInput-underline:after': {
+                borderBottomColor: '#18b6ff', // Change underline color when focused
+              },
+              '& input': {
+                color: '#18b6ff'
+              }
+            }}
           />
           <FormHelperText component={'span'}>
-            <Box textAlign='center'>Votes required to skip song</Box>
+            <Box textAlign='center' color={'#1AC183'}>Votes required to skip song</Box>
           </FormHelperText>
         </FormControl>
       </Grid>
       <Grid item xs={12}>
         <Button
-          color='primary'
-          variant='contained'
+          size='small'
+          variant='text'
           onClick={ updateMode === true ? handleUpdate : handleCreate }
-          >{ updateMode === true ? 'Update Room' : 'Create a Room' }
+          sx={{
+            cursor: 'pointer',
+            color: '#18b6ff',
+            fontSize:'1.8vh',
+            textTransform: 'none',
+            padding:0,
+            ":hover": {
+              color: 'black',
+              backgroundColor: '#18b6ff',
+              boxShadow: '0.4ch 0 0 0 #18b6ff, -0.3ch 0 0 0 #18b6ff, 0.4ch 0.2ch 0 0 #18b6ff, -0.3ch 0.2ch 0 0 #18b6ff',
+              opacity: 0.8,
+          }}}
+          >{ updateMode === true ? '[update room]' : '[create a room]' }
         </Button>
       </Grid>
       { updateMode === true
         ? null
         : <Grid item xs={12}>
-            <Button color='secondary' variant='contained' to="/" component={Link}>Back</Button>
+            <Button
+              to="/"
+              component={Link}
+              size='small'
+              variant='text'
+              sx={{
+                cursor: 'pointer',
+                color: '#ff45b4',
+                fontSize:'1.8vh',
+                textTransform: 'none',
+                padding:0,
+                ":hover": {
+                  color: 'black',
+                  backgroundColor: '#ff45b4',
+                  boxShadow: '0.4ch 0 0 0 #ff45b4, -0.3ch 0 0 0 #ff45b4, 0.4ch 0.2ch 0 0 #ff45b4, -0.3ch 0.2ch 0 0 #ff45b4',
+                  opacity: 0.8,
+                }
+              }}
+            >[back]</Button>
           </Grid>
       }
 

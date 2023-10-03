@@ -134,10 +134,23 @@ const Room = () => {
       </Grid>
       <Grid item xs={12}>
         <Button
-          color='secondary'
-          variant='contained'
+          size='small'
+          variant='text'
           onClick={() => handleShowSettings(false)}
-        >Close settings</Button>
+          sx={{
+            cursor: 'pointer',
+            color: '#ff45b4',
+            fontSize:'1.8vh',
+            textTransform: 'none',
+            padding:0,
+            ":hover": {
+              color: 'black',
+              backgroundColor: '#ff45b4',
+              boxShadow: '0.4ch 0 0 0 #ff45b4, -0.3ch 0 0 0 #ff45b4, 0.4ch 0.2ch 0 0 #ff45b4, -0.3ch 0.2ch 0 0 #ff45b4',
+              opacity: 0.8,
+            }
+          }}
+        >[close settings]</Button>
       </Grid>
     </Grid>
     )
@@ -153,33 +166,53 @@ const Room = () => {
   return (
     <Grid container align="center" direction="column" alignItems="center" justifyContent="center" spacing={2}>
       <Grid item xs={12}>
-        <Typography variant='h4' component="h4">
-          Code: {roomCode.code}
+        <Typography padding={2} color='#1AC183' variant='h5' component="h5">
+          room code: {roomCode.code}
         </Typography>
       </Grid>
       <MusicPlayer {...song} />
       { isHost === 'true'
         ? <Grid item xs={6}>
-            <Typography
-              color= 'primary'
-              variant='contained'
+            <Button
+              size='small'
+              variant='text'
               onClick={() => handleShowSettings(true)}
               sx={{
-                cursor: 'pointer'
+                cursor: 'pointer',
+                color: '#18b6ff',
+                fontSize:'1.8vh',
+                textTransform: 'none',
+                padding:0,
+                ":hover": {
+                  color: 'black',
+                  backgroundColor: '#18b6ff',
+                  boxShadow: '0.4ch 0 0 0 #18b6ff, -0.3ch 0 0 0 #18b6ff, 0.4ch 0.2ch 0 0 #18b6ff, -0.3ch 0.2ch 0 0 #18b6ff',
+                  opacity: 0.8,
+                }
               }}
-            >[Settings]</Typography>
+            >[settings]</Button>
           </Grid>
         : null
       }
       <Grid item xs={6}>
-        <Typography
-          color='secondary'
-          variant='contained'
+        <Button
+          size='small'
+          variant='text'
           onClick={leaveRoom}
           sx={{
-            cursor: 'pointer'
+            cursor: 'pointer',
+            color: '#ff45b4',
+            fontSize:'1.8vh',
+            textTransform: 'none',
+            padding:0,
+            ":hover": {
+              color: 'black',
+              backgroundColor: '#ff45b4',
+              boxShadow: '0.4ch 0 0 0 #ff45b4, -0.3ch 0 0 0 #ff45b4, 0.4ch 0.2ch 0 0 #ff45b4, -0.3ch 0.2ch 0 0 #ff45b4',
+              opacity: 0.8,
+            }
           }}
-        >[Leave Room]</Typography>
+        >[leave room]</Button>
       </Grid>
     </Grid>
   )

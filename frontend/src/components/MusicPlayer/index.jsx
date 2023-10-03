@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import { Grid, Typography, Card, IconButton, LinearProgress, Box } from '@mui/material'
+import { Grid, Typography, Card, LinearProgress, Box, Button } from '@mui/material'
 // import {PlayArrow, SkipNext, Pause} from '@mui/icons-material'
 import axios from 'axios'
 
@@ -53,6 +53,19 @@ const MusicPlayer = (props) => {
 
   return (
       <Card>
+        <style>
+        {`
+          @keyframes scrolling {
+            0% {
+              transform: translateX(100%);
+            }
+            100% {
+              transform: translateX(-100%);
+            }
+          }
+        `}
+        </style>
+
         <Grid container alignItems="center" spacing={2}>
           <Grid item align="center" xs={12}>
             <Box component="img"
@@ -60,53 +73,97 @@ const MusicPlayer = (props) => {
               alt="cover"
               sx={{
                 width: '100%',
-                maxHeight: '300px',
+                maxWidth: '800px',
+                maxHeight: '400px',
                 objectFit: 'cover'
               }}
             />
           </Grid>
           <Grid item xs={12}>
-            <Typography component='h6' variant='h6'>
+            <Typography component='h6' variant='h6'sx={{
+                cursor: 'progress',
+                color: '#7E7E7E',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                width: '100%',
+                animation: 'scrolling 10s linear infinite',
+                ':hover' : {
+                  animationPlayState: 'paused',
+                }
+              }}>
               {props.title}
             </Typography>
             <Typography color="textSecondary" variant='overline'>
               {props.artist}
             </Typography>
             <Box>
-              <Box>
+              <Box paddingBottom={1}>
                 { props.is_playing ?
-                <Typography variant='body1' component='div' onClick={pauseSong} sx={{
+                <Button size='small' variant='text' onClick={pauseSong} sx={{
                   cursor: 'pointer',
                   color: '#1AC183',
-                  transition: 'all 0.3s',
-                  '&:hover': {
-                    color: 'blue',
+                  fontSize:'1.8vh',
+                  textTransform: 'none',
+                  padding:0,
+                  marginRight: '10px',
+                  ":hover": {
+                    color: 'black',
                     backgroundColor: '#1AC183',
+                    boxShadow: '0.4ch 0 0 0 #1AC183, -0.3ch 0 0 0 #1AC183, 0.4ch 0.2ch 0 0 #1AC183, -0.3ch 0.2ch 0 0 #1AC183',
                     opacity: 0.8,
                   }
-                }}>[Pause]</Typography>
-                : <Typography onClick={playSong} sx={{
+                }}>[pause]</Button>
+                : <Button size='small' variant='text' onClick={playSong} sx={{
                   cursor: 'pointer',
                   color: '#1AC183',
-                  transition: 'all 0.3s',
-                  '&:hover': {
-                    color: 'blue',
+                  fontSize:'1.8vh',
+                  textTransform: 'none',
+                  padding:0,
+                  marginRight: '10px',
+                  ":hover": {
+                    color: 'black',
                     backgroundColor: '#1AC183',
+                    boxShadow: '0.4ch 0 0 0 #1AC183, -0.3ch 0 0 0 #1AC183, 0.4ch 0.2ch 0 0 #1AC183, -0.3ch 0.2ch 0 0 #1AC183',
                     opacity: 0.8,
                   }
-                }}>[Play]</Typography>}
+                }}>[play]</Button>
+              }
+                <Button size='small' variant='text' onClick={skipSong} sx={{
+                  cursor: 'pointer',
+                  color: '#b462ff',
+                  fontSize:'1.8vh',
+                  textTransform: 'none',
+                  padding:0,
+                  ":hover": {
+                    color: 'black',
+                    backgroundColor: '#b462ff',
+                    boxShadow: '0.4ch 0 0 0 #b462ff, -0.3ch 0 0 0 #b462ff, 0.4ch 0.2ch 0 0 #b462ff, -0.3ch 0.2ch 0 0 #b462ff',
+                    opacity: 0.8,
+                  }
+                }}>[skip]</Button>
               </Box>
-              <IconButton>
-                <Typography onClick={skipSong} sx={{ cursor: 'pointer'}}>[Skip]</Typography>
-                {/* <SkipNext onClick={skipSong}/> */}
-              </IconButton>
-              <Typography color="textSecondary" variant='subtitle1'>
-                Votes to skip: {props.votes} / {props.votes_required}
+              <Typography paddingBottom={1} color="#ff9528" variant='subtitle1'>
+                Votes to skip: [ {props.votes} / {props.votes_required} ]
               </Typography>
             </Box>
           </Grid>
         </Grid>
-          <LinearProgress variant='determinate' value={songProgress} />
+
+          <LinearProgress
+            variant='determinate'
+            value={songProgress}
+            style={{
+              height: '10px',
+            }}
+            sx={{
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              '& .MuiLinearProgress-bar': {
+                backgroundColor: '#1AC183'
+              }
+            }}
+          />
+
       </Card>
   )
 }
