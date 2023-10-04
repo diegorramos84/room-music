@@ -1,3 +1,5 @@
+import threading
+
 import environ
 import requests
 from api.models import Room
@@ -15,6 +17,8 @@ from .util import (  # generate_random_string,
     skip_song,
     update_or_create_user_tokens,
 )
+
+session_lock = threading.Lock()
 
 env = environ.Env()
 
@@ -96,77 +100,77 @@ class IsAuthenticated(APIView):
 
 
 class CurrentSong(APIView):
-    def get(self, request, format=None):
-        room_code = self.request.session.get('room_code')
-        room = Room.objects.filter(code=room_code)
+    with session_lock:
+        def get(self, request, format=None):
+            if (request.session):
+                room_code = self.request.session.get('room_code')
+                room = Room.objects.only('host', 'code', 'current_song').filter(code=room_code)
+                print(request.session)
+            else:
+                print('NO SESSION! SLOW DOWN')
 
-        if room.exists():
-            room = room[0]
-        else:
-            return Response({'Error': 'could not find room'}, status=status.HTTP_404_NOT_FOUND)
+            if room.exists():
+                room = room[0]
+            else:
+                return Response({'Error': 'could not find room'}, status=status.HTTP_404_NOT_FOUND)
 
-        host = room.host
-        endpoint = 'player/currently-playing'
-        response = execute_spotify_api_request(host, endpoint)
+            host = room.host
+            endpoint = 'player/currently-playing'
+            response = execute_spotify_api_request(host, endpoint)
 
-        # item is what we are looking in the api response that holds info about the song
-        if 'error' in response or 'item' not in response:
-            return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-        item = response.get('item')
-        duration = item.get('duration_ms')
-        progress = response.get('progress_ms')
-        album_cover = item.get('album').get('images')[0].get('url')
-        is_playing = response.get('is_playing')
-        song_id = item.get('id')
+            # item is what we are looking in the api response that holds info about the song
+            if 'error' in response or 'item' not in response:
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
 
-        # format song artists
-        artist_string = ""
+            item = response.get('item')
+            duration = item.get('duration_ms')
+            progress = response.get('progress_ms')
+            album_cover = item.get('album').get('images')[0].get('url')
+            is_playing = response.get('is_playing')
+            song_id = item.get('id')
 
-        for i, artist in enumerate(item.get('artists')):
-            if i > 0:
-                artist_string += ", "
-            name = artist.get('name')
-            artist_string += name
+            # format song artists
+            artist_string = ""
 
-        votes = len(Vote.objects.filter(room=room, song_id=song_id))
+            for i, artist in enumerate(item.get('artists')):
+                if i > 0:
+                    artist_string += ", "
+                name = artist.get('name')
+                artist_string += name
 
-        song = {
-            'title': item.get('name'),
-            'artist': artist_string,
-            'duration': duration,
-            'time': progress,
-            'image_url': album_cover,
-            'is_playing': is_playing,
-            'votes': votes,
-            'votes_required': room.votes_to_skip,
-            'id': song_id
-        }
+            votes = len(Vote.objects.filter(room=room, song_id=song_id))
 
-        self.update_room_song(room, song_id)
+            song = {
+                'title': item.get('name'),
+                'artist': artist_string,
+                'duration': duration,
+                'time': progress,
+                'image_url': album_cover,
+                'is_playing': is_playing,
+                'votes': votes,
+                'votes_required': room.votes_to_skip,
+                'id': song_id
+            }
 
-        return Response(song, status=status.HTTP_200_OK)
+            self.update_room_song(room, song_id)
+
+            return Response(song, status=status.HTTP_200_OK)
 
     def update_room_song(self, room, song_id):
-        try:
             current_song = room.current_song
-
             if current_song != song_id:
                 room.current_song = song_id
                 room.save(update_fields=['current_song'])
                 votes = Vote.objects.filter(room=room).delete()
-            else:
-             return Response({'Error': 'could not find current song'}, status=status.HTTP_404_NOT_FOUND)
-
-        except requests.exceptions.RequestException as e:
-            print("An error occurred:", e)
-            return Response({ 'error': 'An error ocurred while requesting tokens'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class PauseSong(APIView):
     def put(self, request, format=None):
         room_code = self.request.session.get('room_code')
         room = Room.objects.filter(code=room_code)[0]
+        print(room.host)
+        print(room.guest_can_pause)
+        print(self.request.session.session_key, 'KEYYYY!')
 
         if self.request.session.session_key == room.host or room.guest_can_pause:
             pause_song(room.host)
@@ -177,6 +181,10 @@ class PlaySong(APIView):
     def put(self, request, format=None):
         room_code = self.request.session.get('room_code')
         room = Room.objects.filter(code=room_code)[0]
+
+        print(room.host)
+        print(room.guest_can_pause)
+        print(self.request.session.session_key, 'KEYYYY!')
 
         if self.request.session.session_key == room.host or room.guest_can_pause:
             play_song(room.host)

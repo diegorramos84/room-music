@@ -34,17 +34,15 @@ def get_user_tokens(session_key):
 
 def update_or_create_user_tokens(session_key, access_token, refresh_token, expires_in, token_type):
     tokens = get_user_tokens(session_key)
-    # converts the expires in (3600 secs) to a delta and a timestamp to be saved in the db
+
     expires_in = timezone.now() + timedelta(seconds=expires_in)
-    # if user already exists, update its tokens
+
     if tokens:
         tokens.access_token = access_token
-        # tokens.refresh_token = refresh_token
         tokens.expires_in = expires_in
         tokens.token_type = token_type
         tokens.save(update_fields=['access_token', 'expires_in', 'token_type'])
 
-    # otherwise create new token using the model
     else:
         tokens = SpotifyToken(
             user=session_key,
@@ -97,14 +95,19 @@ def execute_spotify_api_request(session_key, endpoint, post_=False, put_=False):
     headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokens.access_token}
 
     if post_:
-        requests.post(BASE_URL + endpoint, headers=headers)
+        try:
+            requests.post(BASE_URL + endpoint, headers=headers)
+        except:
+            return {'Error': 'Issue with request'}
 
     if put_:
-        requests.put(BASE_URL + endpoint, headers=headers)
-
-    response = requests.get(BASE_URL + endpoint, {}, headers=headers)
+        try:
+            requests.put(BASE_URL + endpoint, headers=headers)
+        except:
+            return {'Error': 'Issue with request'}
 
     try:
+        response = requests.get(BASE_URL + endpoint, {}, headers=headers)
         return response.json()
     except:
         return {'Error': 'Issue with request'}

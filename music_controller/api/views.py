@@ -1,3 +1,5 @@
+
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics, status
@@ -7,9 +9,6 @@ from rest_framework.views import APIView
 from .models import Room
 from .serializers import CreateRoomSerializer, RoomSerializer, UpdateRoomSerializer
 
-# Create your views here.
-
-# api view
 
 class RoomView(generics.ListAPIView):
     queryset = Room.objects.all()
@@ -37,7 +36,6 @@ class JoinRoom(APIView):
     def post(self, request, format=None):
         if not request.session.exists(request.session.session_key):
             request.session.create()
-            request.session.modified = True
 
         code = request.data['body']['code']
         if code:
@@ -59,7 +57,6 @@ class CreateRoomView(APIView):
         # checks if session exists, if not, creates one
         if not request.session.exists(request.session.session_key):
             request.session.create()
-            request.session.modified = True
 
         serializer = self.serializer_class(data=request.data['body'])
         if serializer.is_valid():
@@ -78,6 +75,7 @@ class CreateRoomView(APIView):
                 room.save()
                 self.request.session['room_code'] = room.code
             return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
+        return Response({'Bad Request': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateRoom(APIView):
     serializer_class = UpdateRoomSerializer
@@ -85,7 +83,6 @@ class UpdateRoom(APIView):
     def patch(self, request, format=None):
         if not request.session.exists(request.session.session_key):
             request.session.create()
-            request.session.modified = True
 
         serializer = self.serializer_class(data=request.data['body'])
 
@@ -120,7 +117,6 @@ class UserInRoom(APIView):
     def get(self, request, format=None):
         if not request.session.exists(request.session.session_key):
             request.session.create()
-            request.session.modified = True
         data = {
             'code': self.request.session.get('room_code')
         }
@@ -129,7 +125,7 @@ class UserInRoom(APIView):
 class LeaveRoom(APIView):
     def post(self, request, format=None):
         if 'room_code' in self.request.session:
-            code = self.request.session.pop('room_code')
+            self.request.session.pop('room_code')
             host_id = self.request.session.session_key
             room_results = Room.objects.filter(host = host_id)
             if len(room_results) > 0:
