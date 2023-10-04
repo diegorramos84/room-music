@@ -23,12 +23,16 @@ const RoomCreate = (props) => {
     setvotesToSkip(e.target.value)
   }
 
-  const handleGuestCanPauseChange = (e) => {
-    e.target.value === 'true' ? setGuestCanPause(true) : setGuestCanPause(false)
+  const handleGuestCanPauseTrue = () => {
+    setGuestCanPause(true)
+  }
+
+  const handleGuestCanPauseFalse = () => {
+    setGuestCanPause(false)
   }
 
   const handleCreate= async () => {
-
+    console.log(guestCanPause, "GUEST")
     const options = {
       headers: {'Content-Type': 'application/json'},
       body: {
@@ -38,6 +42,7 @@ const RoomCreate = (props) => {
       withCredentials: true
     }
 
+    console.log(options,'guestCanPause')
     try {
       const roomCreated = await axios.post('http://127.0.0.1:8000/api/create-room', options)
       navigate(`/room/${roomCreated.data.code}`)
@@ -98,7 +103,7 @@ const RoomCreate = (props) => {
               label='[play/pause]'
               value='true'
               labelPlacement='bottom'
-              onChange={handleGuestCanPauseChange}
+              onChange={handleGuestCanPauseTrue}
               sx={{
                 '& .MuiFormControlLabel-label': {
                   color: '#18b6ff'
@@ -108,7 +113,7 @@ const RoomCreate = (props) => {
             <FormControlLabel
               label='[no control]'
               value='false'
-              onChange={handleGuestCanPauseChange}
+              onChange={handleGuestCanPauseFalse}
               labelPlacement='bottom'
               sx={{
                 '& .MuiFormControlLabel-label': {
@@ -196,7 +201,7 @@ const RoomCreate = (props) => {
 
 RoomCreate.defaultProps = {
   votesToSkip: 2,
-  guestCanPause: false,
+  guestCanPause: true,
   update: false,
   roomCode: null,
   updateCallback: () => {}

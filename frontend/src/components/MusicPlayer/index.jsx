@@ -1,12 +1,18 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { useState, useEffect} from 'react'
 import { Grid, Typography, Card, LinearProgress, Box, Button } from '@mui/material'
-// import {PlayArrow, SkipNext, Pause} from '@mui/icons-material'
 import axios from 'axios'
 
 
 const MusicPlayer = (props) => {
+  const [voted, setVoted] = useState(false)
   const songProgress = (props.time / props.duration) * 100
+
+  useEffect(() => {
+    setVoted(false)
+    console.log('triggered')
+  }, [props.title])
+
 
   const pauseSong = async () => {
     const options = {
@@ -44,6 +50,11 @@ const MusicPlayer = (props) => {
 
     try {
       await axios.post('http://127.0.0.1:8000/spotify/skip-song', options)
+      if(props.isHost ==='false') {
+        setVoted(true)
+      } else {
+        setVoted(false)
+      }
 
     } catch (error) {
       console.log(error)
@@ -129,7 +140,7 @@ const MusicPlayer = (props) => {
                   }
                 }}>[play]</Button>
               }
-                <Button size='small' variant='text' onClick={skipSong} sx={{
+                <Button size='small' variant='text' onClick={skipSong} disabled={voted} sx={{
                   cursor: 'pointer',
                   color: '#b462ff',
                   fontSize:'1.8vh',

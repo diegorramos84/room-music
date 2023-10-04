@@ -20,6 +20,8 @@ const Room = () => {
   const navigate = useNavigate()
   let roomCode = useParams()
 
+  console.log(isHost)
+
   const getRoomDetails = async () => {
     try {
       const roomData = await axios.get(`http://127.0.0.1:8000/api/get-room?code=${roomCode.code}`)
@@ -41,7 +43,7 @@ const Room = () => {
       }
 
     } catch (error) {
-      console.log(error)
+      console.log(error, 'THIS IS BREAKING')
     }
   }
 
@@ -99,7 +101,7 @@ const Room = () => {
   useEffect(() => {
     getRoomDetails()
 
-    const interval = setInterval(getCurrentSong,1000)
+    const interval = setInterval(getCurrentSong,3000)
 
     return () => clearInterval(interval)
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,7 +126,6 @@ const Room = () => {
     }
   }, [spotifyAuth])
 
-  console.log(song.time)
 
   const renderSettings = () => {
     return (
@@ -170,7 +171,7 @@ const Room = () => {
           room code: {roomCode.code}
         </Typography>
       </Grid>
-      <MusicPlayer {...song} />
+      <MusicPlayer {...song} isHost={isHost}/>
       { isHost === 'true'
         ? <Grid item xs={6}>
             <Button
