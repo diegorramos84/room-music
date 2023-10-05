@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect} from 'react'
 import { Grid, Typography, Card, LinearProgress, Box, Button } from '@mui/material'
@@ -6,12 +7,24 @@ import axios from 'axios'
 
 const MusicPlayer = (props) => {
   const [voted, setVoted] = useState(false)
+  // const [progress, setProgress] = useState((props.time / props.duration) * 100)
   const songProgress = (props.time / props.duration) * 100
+
+  // const updateProgress = () => {
+  //   setProgress((props.time / props.duration)*100)
+  // }
 
   useEffect(() => {
     setVoted(false)
     console.log('triggered')
   }, [props.title])
+
+  // useEffect(() => {
+  //   const interval = setInterval(updateProgress, 1000)
+
+  //   return () => clearInterval(interval)
+
+  // }, [props])
 
 
   const pauseSong = async () => {
@@ -77,18 +90,18 @@ const MusicPlayer = (props) => {
         `}
         </style>
 
-        <Grid container alignItems="center" spacing={2}>
-          <Grid item align="center" xs={12}>
+        <Grid container align="center" alignItems="center" justifyContent="center" spacing={2}>
+          <Grid item xs='auto'>
             <Box component="img"
-              src={props.image_url}
-              alt="cover"
-              sx={{
-                width: '100%',
-                maxWidth: '800px',
-                maxHeight: '400px',
-                objectFit: 'cover'
-              }}
-            />
+                src={props.image_url  ? props.image_url : 'Loading...'}
+                alt="cover"
+                sx={{
+                  width: '100%',
+                  maxWidth: '800px',
+                  maxHeight: '400px',
+                  objectFit: 'cover'
+                }}
+              />
           </Grid>
           <Grid item xs={12}>
             <Typography component='h6' variant='h6'sx={{

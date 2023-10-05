@@ -17,6 +17,7 @@ const Room = () => {
   const [spotifyAuth, setSpotifyAuth] = useState(null)
   const [song, setSong] = useState({})
 
+
   const navigate = useNavigate()
   let roomCode = useParams()
 
@@ -165,15 +166,22 @@ const Room = () => {
     return  renderSettings()
   }
   return (
-    <Grid container align="center" direction="column" alignItems="center" justifyContent="center" spacing={2}>
+    <Grid container align="center" alignItems="center" justifyContent="center" spacing={2}>
       <Grid item xs={12}>
-        <Typography padding={2} color='#1AC183' variant='h5' component="h5">
-          room code: {roomCode.code}
+        <Typography padding={1} color='#1AC183' variant='h7' component="h7">
+          <span style={{ color: isHost === 'true' ? '#A66522' : '#B6B622'}}>
+            {isHost === 'true' ? '[host] ' : '[guest] '}
+          </span>room code: {roomCode.code}
         </Typography>
+        {/* <Typography padding={0} color='#1AC183' variant='h6' component="h6" >
+          {isHost ? "Host" : 'Guest'}
+        </Typography> */}
       </Grid>
-      <MusicPlayer {...song} isHost={isHost}/>
+      <Grid item xs={12}>
+        <MusicPlayer {...song} isHost={isHost}/>
+      </Grid>
       { isHost === 'true'
-        ? <Grid item xs={6}>
+        ? <Grid item xs={12}>
             <Button
               size='small'
               variant='text'
