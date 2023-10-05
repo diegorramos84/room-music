@@ -1,10 +1,6 @@
 ## Symphona
 ![Free_Sample_By_Wix-removebg-preview](https://github.com/diegorramos84/room-music/assets/17050237/6d0710b1-43e7-479a-92c8-4a1bcba1f93b)
 
-
-https://github.com/diegorramos84/room-music/assets/17050237/30e95950-43c7-4953-a569-8903210ad730
-
-
 ## Overview
 
 The App aims to give your guests control over the party's music playlist, and even the power to vote on skipping tracks they're not vibing with.
