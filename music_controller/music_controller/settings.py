@@ -141,8 +141,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
+    'TITLE': 'Symphona',
+    'DESCRIPTION': 'The App aims to give your guests control over the partys music playlist, and even the power to vote on skipping tracks theyre not vibing with.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
