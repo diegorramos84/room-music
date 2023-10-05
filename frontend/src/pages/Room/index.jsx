@@ -21,7 +21,6 @@ const Room = () => {
   const navigate = useNavigate()
   let roomCode = useParams()
 
-  console.log(isHost)
 
   const getRoomDetails = async () => {
     try {
@@ -44,7 +43,7 @@ const Room = () => {
       }
 
     } catch (error) {
-      console.log(error, 'THIS IS BREAKING')
+      console.log(error)
     }
   }
 
@@ -83,7 +82,6 @@ const Room = () => {
   }
 
   const authenticateSpotify = async () => {
-    console.log('auth')
     if(spotifyAuth === false) {
       try {
         const get_url = await axios.get('http://127.0.0.1:8000/spotify/get-url')
@@ -117,7 +115,6 @@ const Room = () => {
 
   // will be fired after we check if user is authenticated and update the auth state
   useEffect(() => {
-    console.log(spotifyAuth)
     if (spotifyAuth === false) {
       console.log('User is not authenticated, redirecting to Spotify...')
       authenticateSpotify()
@@ -168,7 +165,7 @@ const Room = () => {
   return (
     <Grid container align="center" alignItems="center" justifyContent="center" spacing={2}>
       <Grid item xs={12}>
-        <Typography padding={1} color='#1AC183' variant='h7' component="h7">
+        <Typography padding={1} color='#1AC183' variant='h6' component="h6">
           <span style={{ color: isHost === 'true' ? '#A66522' : '#B6B622'}}>
             {isHost === 'true' ? '[host] ' : '[guest] '}
           </span>room code: {roomCode.code}

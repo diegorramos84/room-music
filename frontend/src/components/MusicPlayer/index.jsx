@@ -16,7 +16,6 @@ const MusicPlayer = (props) => {
 
   useEffect(() => {
     setVoted(false)
-    console.log('triggered')
   }, [props.title])
 
   // useEffect(() => {

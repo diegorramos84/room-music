@@ -32,7 +32,6 @@ const RoomCreate = (props) => {
   }
 
   const handleCreate= async () => {
-    console.log(guestCanPause, "GUEST")
     const options = {
       headers: {'Content-Type': 'application/json'},
       body: {
@@ -42,7 +41,6 @@ const RoomCreate = (props) => {
       withCredentials: true
     }
 
-    console.log(options,'guestCanPause')
     try {
       const roomCreated = await axios.post('http://127.0.0.1:8000/api/create-room', options)
       navigate(`/room/${roomCreated.data.code}`)
