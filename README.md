@@ -3,6 +3,10 @@
 
 ## Overview
 
+https://github.com/diegorramos84/room-music/assets/17050237/4e2a11d5-924a-46ea-9ef9-25964c5cffb1
+
+
+
 The App aims to give your guests control over the party's music playlist, and even the power to vote on skipping tracks they're not vibing with.
 
 ## Features
